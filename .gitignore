@@ -2,6 +2,7 @@
 *.ii
 *.gpu
 *.ptx
+*.pyc
 *.cubin
 *.fatbin
 build
