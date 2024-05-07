@@ -1,14 +1,12 @@
-add_library(gpu_library SHARED
-  gpu_library.cu)
+add_library(cuda_mandelbrot_lib SHARED
+  cuda_mandelbrot_lib.cu)
 
-#target_include_directories(gpu_library PUBLIC ${Python3_INCLUDE_DIRS})
-target_include_directories(gpu_library PUBLIC ${CMAKE_SOURCE_DIR}/pybind11/include)
-target_link_libraries(gpu_library PUBLIC
+#target_include_directories(cuda_mandelbrot_lib PUBLIC ${Python3_INCLUDE_DIRS})
+target_include_directories(cuda_mandelbrot_lib PUBLIC ${CMAKE_SOURCE_DIR}/pybind11/include)
+target_link_libraries(cuda_mandelbrot_lib PUBLIC
   #${PYTHON3_PYTHON}
   Python3::Python
   cudart)
 
 # set what comes before the library name, here no "lib"
-set_target_properties(gpu_library PROPERTIES PREFIX "")
-
-configure_file(test_mul.py test_mul.py COPYONLY)
+set_target_properties(cuda_mandelbrot_lib PROPERTIES PREFIX "")

@@ -77,7 +77,7 @@ void map_array(pybind11::array_t<T> vec, T scalar)
   }
 }
 
-PYBIND11_MODULE(gpu_library, m)
+PYBIND11_MODULE(cuda_mandelbrot_lib, m)
 {
   m.def("multiply_with_scalar", map_array<double>);
 }
