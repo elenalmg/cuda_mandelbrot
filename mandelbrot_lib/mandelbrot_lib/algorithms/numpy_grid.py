@@ -5,8 +5,8 @@ class NumpyGrid(_VectorBaseAlgorithm):
     """Numpy-based Mandelbrot set computation algorithm."""
 
     def compute_escape_iter(self, x: float, y: float, max_iter: int) -> int:
-        c = x + 1j * y
-        z = 0
+        c = complex(x, y)
+        z = 0.0j
         for i in range(max_iter):
             z = z * z + c
             if (z.real * z.real + z.imag * z.imag) >= self.escape_radius**2:
