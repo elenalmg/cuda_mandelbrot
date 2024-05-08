@@ -53,7 +53,7 @@ class _VectorBaseAlgorithm(_BaseAlgorithm):
 
     @abstractmethod
     def compute_grid(
-        self, x_min: float, y_min: float, x_max: float, y_max: float, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT, max_iter: int = DEFAULT_ITER) -> list:
+        self, x_min: float, y_min: float, x_max: float, y_max: float, width: int = DEFAULT_WIDTH, height: int = DEFAULT_HEIGHT, max_iter: int = DEFAULT_ITER) -> np.ndarray:
         pass
 
 
