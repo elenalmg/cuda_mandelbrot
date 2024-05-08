@@ -1,6 +1,6 @@
 import numpy as np
 from mandelbrot_lib.algorithms._base import _ComplexBaseAlgorithm, _VectorBaseAlgorithm
-from mandelbrot_lib.settings import DEFAULT_ESCAPE_RADIUS, DEFAULT_ITER
+from mandelbrot_lib.settings import DEFAULT_ESCAPE_RADIUS, DEFAULT_ITER, DEFAULT_HEIGHT, DEFAULT_WIDTH
 
 
 class MockComplexBaseAlgorithm(_ComplexBaseAlgorithm):
@@ -41,7 +41,13 @@ def test_complex_compute_grid():
 
 def test_complex_benchmark_defaults():
     algo = MockComplexBaseAlgorithm()
-    result = algo.benchmark_defaults([DEFAULT_ITER])
+    result = algo.benchmark_defaults(DEFAULT_ITER)
+    assert isinstance(result, float)
+
+
+def test_complex_benchmark_compute_grid_defaults():
+    algo = MockComplexBaseAlgorithm()
+    result = algo.benchmark_compute_grid_defaults(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_ITER)
     assert isinstance(result, float)
 
 
@@ -67,5 +73,11 @@ def test_vector_compute_grid():
 
 def test_vector_benchmark_defaults():
     algo = MockVectorBaseAlgorithm()
-    result = algo.benchmark_defaults([DEFAULT_ITER])
+    result = algo.benchmark_defaults(DEFAULT_ITER)
+    assert isinstance(result, float)
+
+
+def test_vector_benchmark_compute_grid_defaults():
+    algo = MockVectorBaseAlgorithm()
+    result = algo.benchmark_compute_grid_defaults(DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_ITER)
     assert isinstance(result, float)
