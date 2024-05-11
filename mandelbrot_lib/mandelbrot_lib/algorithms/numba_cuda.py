@@ -19,6 +19,7 @@ class NumbaCuda(_VectorBaseAlgorithm):
                 return i
         return max_iter
     
+    
     def compute_grid(self, x_min: float, y_min: float, x_max: float, y_max: float, width: int, height: int, max_iter: int) -> np.ndarray:
         results = np.zeros((height, width), dtype=np.int32)
 
