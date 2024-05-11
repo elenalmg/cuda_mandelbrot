@@ -6,7 +6,7 @@ class NumpyGrid(_VectorBaseAlgorithm):
 
     def compute_escape_iter(self, x: np.ndarray, y: np.ndarray, max_iter: int) -> np.ndarray:
         complex_grid = x + 1j * y
-        z = np.zeros_like(complex_grid, dtype=complex_grid.dtype)
+        z = np.zeros_like(complex_grid, dtype=np.complex64)
         escape_iterations = np.full_like(complex_grid, -1, dtype=np.int32)
         diverged = np.zeros_like(complex_grid, dtype=bool)
         for i in range(max_iter):
