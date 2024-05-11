@@ -5,7 +5,7 @@ from ._base import _VectorBaseAlgorithm
 
 class NumbaCuda(_VectorBaseAlgorithm):
     """Numba-based Mandelbrot set computation algorithm for GPU."""
-
+    
     @cuda.jit(device=True)
     def compute_escape_iter(self, x : float, y : float, max_iter: int) -> np.ndarray:
         c = complex(x, y)
