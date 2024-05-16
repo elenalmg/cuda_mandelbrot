@@ -4,7 +4,7 @@ from ._base import _VectorBaseAlgorithm
 
     
 @cuda.jit(device=True)
-def _compute_escape_iter(x: float, y: float, max_iter: int, escape_radius: int) -> np.ndarray:
+def _compute_escape_iter(x: float, y: float, max_iter: int, escape_radius: float) -> np.ndarray:
     c = complex(x, y)
     z = 0.0j
     for i in range(max_iter):
@@ -14,7 +14,7 @@ def _compute_escape_iter(x: float, y: float, max_iter: int, escape_radius: int) 
     return -1
 
 @cuda.jit
-def compute_grid_kernel(x_min: float, y_min: float, x_max: float, y_max: float, width: int, height: int, max_iter: int, results: np.ndarray, escape_radius: int):
+def compute_grid_kernel(x_min: float, y_min: float, x_max: float, y_max: float, width: int, height: int, max_iter: int, results: np.ndarray, escape_radius: float):
     pixel_size_x = (x_max - x_min) / width
     pixel_size_y = (y_max - y_min) / height
     x, y = cuda.grid(2)
