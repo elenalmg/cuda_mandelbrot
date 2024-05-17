@@ -47,7 +47,7 @@ private:
 };
 
 PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
-    py::class_<MandelbrotCPP>(m, "CPPMandelbrot")
+    py::class_<MandelbrotCPP>(m, "MandelbrotCPP")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_escape_iter", &MandelbrotCPP::compute_escape_iter, py::arg("x"), py::arg("y"), py::arg("max_iter"))
         .def("compute_grid", &MandelbrotCPP::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
