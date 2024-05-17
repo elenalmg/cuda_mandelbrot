@@ -12,14 +12,21 @@ __global__ void mandelbrot_kernel(float x_min, float y_min, float x_max, float y
         float zr = 0.0f, zi = 0.0f;
         float zr2 = 0.0f, zi2 = 0.0f;
         int iter = 0;
+
         while (zr2 + zi2 < escape_radius_squared && iter < max_iter) {
             zi = 2.0f * zr * zi + imag;
             zr = zr2 - zi2 + real;
+
             zr2 = zr * zr;
             zi2 = zi * zi;
+
             iter++;
         }
-        results[idy * width + idx] = iter;
+        if (zr2 + zi2 >= escape_radius_squared) {
+            results[idy * width + idx] = iter;
+        } else {
+            results[idy * width + idx] = -1;
+        }
     }
 }
 

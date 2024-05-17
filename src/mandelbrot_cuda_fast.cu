@@ -31,7 +31,7 @@ __global__ void mandelbrot_kernel_fast(float x_min, float y_min, float x_max, fl
         if (zr2 + zi2 >= escape_radius_squared) {
             results[idy * width + idx] = iter;
         } else {
-            results[idy * width + idx] = max_iter;
+            results[idy * width + idx] = -1;
         }
     }
 }
