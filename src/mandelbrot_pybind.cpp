@@ -26,7 +26,7 @@ private:
     float escape_radius_squared;
 };
 
-PYBIND11_MODULE(mandelbrot, m) {
+PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
     py::class_<MandelbrotCPP>(m, "CPPMandelbrot")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_escape_iter", &MandelbrotCPP::compute_escape_iter, py::arg("x"), py::arg("y"), py::arg("max_iter"))
