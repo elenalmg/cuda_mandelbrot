@@ -4,6 +4,7 @@
 #include "mandelbrot.cpp"
 
 extern "C" void compute_grid_cuda(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
+extern "C" void compute_grid_cuda_fast(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
 
 namespace py = pybind11;
 
@@ -54,7 +55,7 @@ PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
     py::class_<MandelbrotCUDA>(m, "CUDAMandelbrot")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &MandelbrotCUDA::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
-py::class_<FastMandelbrotCUDA>(m, "FastMandelbrotCUDA")
+    py::class_<FastMandelbrotCUDA>(m, "FastMandelbrotCUDA")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &FastMandelbrotCUDA::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
 }
