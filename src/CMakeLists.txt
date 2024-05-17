@@ -3,6 +3,7 @@ add_library(cuda_mandelbrot_lib SHARED
     mandelbrot.cpp
     mandelbrot_cuda.cu
     mandelbrot_cuda_fast.cu
+    mandelbrot_cuda_faster.cu
 )
 
 #target_include_directories(cuda_mandelbrot_lib PUBLIC ${Python3_INCLUDE_DIRS})
