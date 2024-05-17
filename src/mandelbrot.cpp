@@ -1,6 +1,8 @@
 #include <vector>
 #include <complex>
 #include <thread>
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 
 class MandelbrotCPP {
 public:
@@ -21,17 +23,20 @@ public:
         return max_iter;
     }
 
-    void compute_grid(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, std::vector<int>& results) const {
+    pybind11::array_t<int> compute_grid(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter) const {
+        auto result = pybind11::array_t<int>(width * height);
+        auto buf = result.request();
+        int* ptr = static_cast<int*>(buf.ptr);
+
         float pixel_size_x = (x_max - x_min) / width;
         float pixel_size_y = (y_max - y_min) / height;
-        results.resize(width * height);
 
         auto compute_row = [&](int start, int end) {
             for (int y = start; y < end; ++y) {
                 for (int x = 0; x < width; ++x) {
                     float real = x_min + x * pixel_size_x;
                     float imag = y_min + y * pixel_size_y;
-                    results[y * width + x] = compute_escape_iter(real, imag, max_iter);
+                    ptr[y * width + x] = compute_escape_iter(real, imag, max_iter);
                 }
             }
         };
@@ -51,6 +56,9 @@ public:
                 t.join();
             }
         }
+
+        result.resize({height, width});
+        return result;
     }
 
 private:
