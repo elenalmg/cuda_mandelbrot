@@ -1,6 +1,7 @@
 import numpy as np
 from ._base import _VectorBaseAlgorithm
 
+
 class NumpyGrid(_VectorBaseAlgorithm):
     """Numpy-based Mandelbrot set computation algorithm."""
 
@@ -16,22 +17,11 @@ class NumpyGrid(_VectorBaseAlgorithm):
             diverged = np.logical_or(diverged, escaped)
         return escape_iterations
 
-
-    def compute_grid(self, x_min: float, y_min: float, x_max: float, y_max: float, width: int, height: int, max_iter: int) -> np.ndarray:
+    def compute_grid(
+        self, x_min: float, y_min: float, x_max: float, y_max: float, width: int, height: int, max_iter: int
+    ) -> np.ndarray:
         real = np.linspace(x_min, x_max, width)
         imag = np.linspace(y_min, y_max, height)
         real_grid, imag_grid = np.meshgrid(real, imag)
         results = self.compute_escape_iter(real_grid, imag_grid, max_iter)
         return results
-
-
-
-
-
-        # z = np.zeros_like(complex_grid, dtype=complex_grid.dtype)
-        # results = np.zeros_like(complex_grid, dtype=np.int32)
-        # update = np.ones_like(complex_grid, dtype=bool)
-        # for i in range(max_iter):
-        #     z = z * z + complex_grid
-        #     update = np.logical_and(update, np.abs(z) < self.escape_radius)
-        #     results = np.where(np.logical_not(update), results, i)
