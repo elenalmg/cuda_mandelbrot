@@ -26,6 +26,25 @@ private:
     float escape_radius_squared;
 };
 
+class FastMandelbrotCUDA {
+public:
+    FastMandelbrotCUDA(float escape_radius) : escape_radius_squared(escape_radius * escape_radius) {}
+
+    pybind11::array_t<int> compute_grid(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter) const {
+        auto result = pybind11::array_t<int>(width * height);
+        auto buf = result.request();
+        int* ptr = static_cast<int*>(buf.ptr);
+
+        compute_grid_cuda_fast(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, ptr);
+
+        result.resize({height, width});
+        return result;
+    }
+
+private:
+    float escape_radius_squared;
+};
+
 PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
     py::class_<MandelbrotCPP>(m, "CPPMandelbrot")
         .def(py::init<float>(), py::arg("escape_radius"))
@@ -35,4 +54,7 @@ PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
     py::class_<MandelbrotCUDA>(m, "CUDAMandelbrot")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &MandelbrotCUDA::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
+py::class_<FastMandelbrotCUDA>(m, "FastMandelbrotCUDA")
+        .def(py::init<float>(), py::arg("escape_radius"))
+        .def("compute_grid", &FastMandelbrotCUDA::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
 }
