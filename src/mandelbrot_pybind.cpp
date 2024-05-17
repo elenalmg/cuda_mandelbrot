@@ -109,7 +109,7 @@ PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &FastMandelbrotCUDA::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"))
         .def("compute_grid_smooth", &FastMandelbrotCUDA::compute_grid_smooth, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
-    py::class_<FasterMandelbrotCUDA>(m, "FastMandelbrotCUDA")
+    py::class_<FasterMandelbrotCUDA>(m, "FasterMandelbrotCUDA")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &FasterMandelbrotCUDA::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
 }
