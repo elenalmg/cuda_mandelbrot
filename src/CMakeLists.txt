@@ -1,5 +1,5 @@
 add_library(cuda_mandelbrot_lib SHARED
-    mandelbrot_pybind.cu
+    mandelbrot_pybind.cpp
     mandelbrot.cpp
     mandelbrot_cuda.cu
 )
