@@ -167,7 +167,7 @@ PYBIND11_MODULE(cuda_mandelbrot_lib, m) {
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &ManualUnroll::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"))
         .def("compute_grid_smooth", &ManualUnroll::compute_grid_smooth, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
-    py::class_<PolynomialUnroll>(m, "math_unroll")
+    py::class_<PolynomialUnroll>(m, "PolynomialUnroll")
         .def(py::init<float>(), py::arg("escape_radius"))
         .def("compute_grid", &PolynomialUnroll::compute_grid, py::arg("x_min"), py::arg("y_min"), py::arg("x_max"), py::arg("y_max"), py::arg("width"), py::arg("height"), py::arg("max_iter"));
     py::class_<PragmaUnroll>(m, "PragmaUnroll")
