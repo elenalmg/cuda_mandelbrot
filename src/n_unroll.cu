@@ -1,3 +1,8 @@
+// This file defines several hard-coded unrolled versions of the algorithms.
+// Instead of iterating over loops normally, the compiler will unroll the loops as
+// a series of calls of whatever in inside of the loop, as long as the parameters of
+// the loop are hard-coded, hence the hard-coded max_iter and unroll_factor here.
+
 #include <vector>
 #include <cuda_runtime.h>
 

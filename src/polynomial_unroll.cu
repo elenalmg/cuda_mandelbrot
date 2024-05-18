@@ -2,7 +2,7 @@
 #include <cuda_runtime.h>
 
 
-__global__ void mandelbrot_kernel_faster(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
+__global__ void mandelbrot_kernel_math_unroll(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     int idy = blockIdx.y * blockDim.y + threadIdx.y;
     if (idx < width && idy < height) {
@@ -50,7 +50,7 @@ __global__ void mandelbrot_kernel_faster(float x_min, float y_min, float x_max, 
     }
 }
 
-extern "C" void compute_grid_cuda_faster(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
+extern "C" void compute_grid_cuda_math_unroll(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
     int* d_results;
     size_t size = width * height * sizeof(int);
     cudaMalloc(&d_results, size);
@@ -58,7 +58,7 @@ extern "C" void compute_grid_cuda_faster(float x_min, float y_min, float x_max, 
     dim3 threads_per_block(16, 16);
     dim3 num_blocks((width + threads_per_block.x - 1) / threads_per_block.x, (height + threads_per_block.y - 1) / threads_per_block.y);
 
-    mandelbrot_kernel_faster<<<num_blocks, threads_per_block>>>(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, d_results);
+    mandelbrot_kernel_math_unroll<<<num_blocks, threads_per_block>>>(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, d_results);
 
     cudaMemcpy(results, d_results, size, cudaMemcpyDeviceToHost);
     cudaFree(d_results);

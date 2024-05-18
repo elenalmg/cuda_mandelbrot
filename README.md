@@ -19,13 +19,15 @@ As $n$ approaches infinity, the magnitude of \( z_n \) will either remain bounde
   <p><em>Figure 1: Mandelbrot set in the complex plane</em></p>
 </div>
 
+Since each pixel has to be computed individually, this problem is _embarassingly parallel_.
+
 ## Algorithms
 
-We have implemented various algorithms to compute the Mandelbrot set through a Python package called `mandelbrot_lib`and a C++/CUDA-based Python package called `cuda_mandelbrot_lib`.
+We have implemented various algorithms to compute the Mandelbrot set through a Python package called `mandelbrot_lib`and a C++/CUDA-based Python package called `cuda_mandelbrot_lib`. Some are common algorithms, and a few are our own.
 
 ```python
 from mandelbrot_lib import NaiveSequential, NumpyGrid, NumbaCuda
-from cuda_mandelbrot_lib import MandelbrotCPP, MandelbrotCUDA, FastMandelbrotCUDA
+from cuda_mandelbrot_lib import MultithreadCPP, BaseCUDA, ManualUnroll, PolynomialUnroll, PragmaUnroll
 ```
 
 ### 1. Naive Sequential (Python)
@@ -63,7 +65,7 @@ numba = NumbaCuda(escape_radius=escape_radius)
 This is a C++ implementation of the Mandelbrot set computation. It provides a performance improvement over Python by using lower-level operations and optimizations available in C++. This implementation uses multithreading to parallelize the computation across multiple CPU cores.
 
 ```python
-cpp = MandelbrotCPP(escape_radius=escape_radius)
+cpp = MultithreadCPP(escape_radius=escape_radius)
 ```
 
 ### 5. CUDA Implementation
@@ -77,11 +79,83 @@ The CUDA implementation leverages NVIDIA's CUDA platform to perform parallel com
 cuda = MandelbrotCUDA(escape_radius=escape_radius)
 ```
 
-### 6. Fast Mandelbrot Algorithm
+---
 
-The Fast Mandelbrot algorithm is our attempt at a more optimized algorithm. It reduces the number of iterations required by performing two iterations in a single step.
+> The next three algorithms are our attemps at making a faster algorithm than the regular `MandelbrotCUDA` using general techniques and not Mandelbrot-specific micro-optimisations. For exemple, we could have manually defined certain areas of the complex plane we _know_ are or aren't in the set, and skip computation for these areas, but this is not the purpose of this analysis. We focused our attention on a technique that is more transferable to other problems: unrolling.
 
-**Single Iteration**
+### 6. Unrolling
+
+**Unrolling**
+
+Let's consider a simple loop function
+
+```python
+def to_optimise():
+    for i in range(3):
+        do_something(i)
+```
+
+Under the hood, in most languages, it does the following:
+
+```python
+i = 0
+
+do_something(i)
+if i >= 3:  # evaluates to False
+    break
+i += 1
+
+do_something(i)
+if i >= 3:  # evaluates to False
+    break
+i += 1
+
+do_something(i)
+if i >= 3:  # evaluates to True
+    break
+```
+
+If `do_something`is fast enough, all the checks and extrai `i` variable can take a noticeable toll on performance. Now, consider the "unrolled" version:
+
+```python
+def unrolled():
+    do_something(0)
+    do_something(1)
+    do_something(2)
+```
+
+This does significantly less work, for the same result.
+
+**Unrolling Mandelbrot**
+
+How can this be applied to the Mandelbrot set computation? Let's write the basic algorithm
+
+```python
+def escape_iteration(c, max_iter, escape_radius):
+    z = 0 + 0j
+    for iter_ in range(max_iter):
+        z = z * z + c
+        if norm(z) > escape_radius:
+            return iter_
+    return max_iter
+```
+
+A first idea that comes to mind is taking two-steps at each iteration. This "semi-unrolls" the loop:
+
+```python
+def escape_iteration_double(c, max_iter, escape_radius):
+    z = 0 + 0j
+    for iter_ in range(max_iter // 2):
+        z = z * z + c
+        z = z * z + c
+        if norm(z) > escape_radius:
+            return iter_ * 2
+    return max_iter // 2
+```
+
+This eliminates half of the radius and #iterations checks, at the cost of sometimes overshooting the escape radius by one iteration. Indeed, this is doing iterations by batches of 2, but a point might only need an odd number of iterations to cross the escape radius.
+
+The algorithm above is the basis for the `ManualUnroll` algorithm, even though it does it in the (x, y) plane and not the complex plane, as detailled below:
 
 A single iteration of the Mandelbrot function is:
 
@@ -89,11 +163,12 @@ A single iteration of the Mandelbrot function is:
 
 Expanding this using vector notation, we get:
 
-\[ z*{n+1} = \begin{pmatrix} x \\ y \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
-\[ z*{n+1} = \begin{pmatrix} x^2 - y^2 \\ 2xy \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
-\[ z\_{n+1} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \]
+\[ z\_{n+1} = \begin{pmatrix} x \\ y \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
 
-**Double iteration**
+Using multiplication rules for complex numbers,
+
+\[ z*{n+1} = \begin{pmatrix} x^2 - y^2 \\ 2xy \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
+\[ z*{n+1} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \]
 
 Combining two iterations into one, we get:
 
@@ -104,6 +179,10 @@ Let \( \begin{pmatrix} x_1 \\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a 
 \[ z*{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
 \[ z*{n+2} = \begin{pmatrix} x*1^2 - y_1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
 \[ z*{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\ 2x_1y_1 + b \end{pmatrix} \]
+
+---
+
+Another idea is to expand this formula down to the most granular polynomial.
 
 Expanding the terms, we get:
 
@@ -121,10 +200,36 @@ For the imaginary part:
 Therefore:
 \[ z\_{n+2} = \begin{pmatrix} x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a \\ 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b \end{pmatrix} \]
 
-### Advantages
+When computing this polynomial, we can re-use a lot of the factors.
 
-By combining two iterations into one, the Fast Mandelbrot algorithm effectively reduces the computational workload. This optimization is particularly beneficial for large-scale computations, such as those required to render high-resolution images of the Mandelbrot set.
+```python
+xy = x * y
+x2 = x * x
+y2 = y * y
+x4 = x2 * x2
+x2y2 = x2 * y2
+y4 = y2 * y2
+ax2 = a * x2
+x3y = xy * x2
+...
+```
 
-### Conclusion
+We named this algorithm `PolynomialUnroll`
 
-The Fast Mandelbrot algorithm leverages the mathematical properties of complex numbers to perform two iterations in a single step. This optimization significantly improves the performance of Mandelbrot set computations, making it a valuable approach for applications requiring high computational efficiency.
+---
+
+Finally, we suspected that unrolling more than 2 operations can be beneficial in areas of the plane where a lot of iterations are needed to escape the radius, and is worth the occasional overhead of doing more iterations than needed. This is what is implemented in the `n_unroll.cu` script, which makes use of the `#pragma unroll` decorator to unroll the loops at compile time, for fixed unroll lengths in $[2, 3, 5, 10]$. The algorithm is called `PragmaUnroll` and implements `compute_grid_2`, `compute_grid_3`, `compute_grid_5` and `compute_grid_10` methods.
+
+## Results
+
+Below is a graph of the average execution time of each algorithm per grid size, in log-log scale.
+
+As we expect, all algorithms are asymptotically linear, but with different intersepts, and different behaviours for smaller grids.
+
+Noticeably, all custom CPU implementations beat the Numpy and Numba implementations by orders of magnitude, but the different GPU implementations are hard to differentiate. We'll run a separate analysis for those below, in two different areas of the grid.
+
+**Wide grid**
+
+On a wide grid (i.e. one with a wide range of escape radii), we don't expect the high unroll values to perform much better than the standard CUDA implementation.
+
+**Narrow grid**

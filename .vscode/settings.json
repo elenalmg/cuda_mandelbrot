@@ -3,6 +3,7 @@
     "complex": "cpp",
     "string": "cpp",
     "vector": "cpp",
-    "__locale": "cpp"
+    "__locale": "cpp",
+    "ios": "cpp"
   }
 }

@@ -1,7 +1,7 @@
 #include <vector>
 #include <cuda_runtime.h>
 
-__device__ int mandelbrot_escape_time_fast(float x, float y, int max_iter, float escape_radius_squared) {
+__device__ int mandelbrot_escape_time_manual_unroll(float x, float y, int max_iter, float escape_radius_squared) {
     float zr = x, zi = y;
     float zr2 = zr * zr, zi2 = zi * zi;
     int iter = 0;
@@ -26,7 +26,7 @@ __device__ int mandelbrot_escape_time_fast(float x, float y, int max_iter, float
     }
 }
 
-__device__ float mandelbrot_smooth_color_fast(float x, float y, int max_iter, float escape_radius_squared) {
+__device__ float mandelbrot_smooth_color_manual_unroll(float x, float y, int max_iter, float escape_radius_squared) {
     float zr = x, zi = y;
     float zr2 = zr * zr, zi2 = zi * zi;
     int iter = 0;
@@ -53,7 +53,7 @@ __device__ float mandelbrot_smooth_color_fast(float x, float y, int max_iter, fl
     }
 }
 
-__global__ void mandelbrot_kernel_fast(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
+__global__ void mandelbrot_kernel_manual_unroll(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     int idy = blockIdx.y * blockDim.y + threadIdx.y;
     if (idx < width && idy < height) {
@@ -62,11 +62,11 @@ __global__ void mandelbrot_kernel_fast(float x_min, float y_min, float x_max, fl
         float real = x_min + idx * pixel_size_x;
         float imag = y_min + idy * pixel_size_y;
 
-        results[idy * width + idx] = mandelbrot_escape_time_fast(real, imag, max_iter, escape_radius_squared);
+        results[idy * width + idx] = mandelbrot_escape_time_manual_unroll(real, imag, max_iter, escape_radius_squared);
     }
 }
 
-__global__ void mandelbrot_kernel_smooth_fast(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, float* results) {
+__global__ void mandelbrot_kernel_smooth_manual_unroll(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, float* results) {
     int idx = blockIdx.x * blockDim.x + threadIdx.x;
     int idy = blockIdx.y * blockDim.y + threadIdx.y;
     if (idx < width && idy < height) {
@@ -75,11 +75,11 @@ __global__ void mandelbrot_kernel_smooth_fast(float x_min, float y_min, float x_
         float real = x_min + idx * pixel_size_x;
         float imag = y_min + idy * pixel_size_y;
 
-        results[idy * width + idx] = mandelbrot_smooth_color_fast(real, imag, max_iter, escape_radius_squared);
+        results[idy * width + idx] = mandelbrot_smooth_color_manual_unroll(real, imag, max_iter, escape_radius_squared);
     }
 }
 
-extern "C" void compute_grid_cuda_fast(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
+extern "C" void compute_grid_cuda_manual_unroll(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results) {
     int* d_results;
     size_t size = width * height * sizeof(int);
     cudaMalloc(&d_results, size);
@@ -87,13 +87,13 @@ extern "C" void compute_grid_cuda_fast(float x_min, float y_min, float x_max, fl
     dim3 threads_per_block(16, 16);
     dim3 num_blocks((width + threads_per_block.x - 1) / threads_per_block.x, (height + threads_per_block.y - 1) / threads_per_block.y);
 
-    mandelbrot_kernel_fast<<<num_blocks, threads_per_block>>>(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, d_results);
+    mandelbrot_kernel_manual_unroll<<<num_blocks, threads_per_block>>>(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, d_results);
 
     cudaMemcpy(results, d_results, size, cudaMemcpyDeviceToHost);
     cudaFree(d_results);
 }
 
-extern "C" void compute_grid_cuda_smooth_fast(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, float* results) {
+extern "C" void compute_grid_cuda_smooth_manual_unroll(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, float* results) {
     float* d_results;
     size_t size = width * height * sizeof(float);
     cudaMalloc(&d_results, size);
@@ -101,7 +101,7 @@ extern "C" void compute_grid_cuda_smooth_fast(float x_min, float y_min, float x_
     dim3 threads_per_block(16, 16);
     dim3 num_blocks((width + threads_per_block.x - 1) / threads_per_block.x, (height + threads_per_block.y - 1) / threads_per_block.y);
 
-    mandelbrot_kernel_smooth_fast<<<num_blocks, threads_per_block>>>(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, d_results);
+    mandelbrot_kernel_smooth_manual_unroll<<<num_blocks, threads_per_block>>>(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, d_results);
 
     cudaMemcpy(results, d_results, size, cudaMemcpyDeviceToHost);
     cudaFree(d_results);

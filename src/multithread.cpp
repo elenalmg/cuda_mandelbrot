@@ -4,9 +4,9 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
 
-class MandelbrotCPP {
+class MultithreadCPP {
 public:
-    MandelbrotCPP(float escape_radius) : escape_radius_squared(escape_radius * escape_radius) {}
+    MultithreadCPP(float escape_radius) : escape_radius_squared(escape_radius * escape_radius) {}
 
     int compute_escape_iter(float x, float y, int max_iter) const {
         float zr = 0.0f, zi = 0.0f;
