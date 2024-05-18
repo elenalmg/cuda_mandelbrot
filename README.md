@@ -1,35 +1,15 @@
 CUDA/pybind project structure adapted from https://github.com/pkestene/pybind11-cuda
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>README</title>
-    <style>
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .title {
-            font-weight: bold;
-            font-size: 24px;
-        }
-        .image {
-            max-width: 300px;
-            max-height: 300px;
-        }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <div class="title">CUDA<br>Mandelbrot<br>acceleration</div>
-        <img src="images/zoom.png" alt="Description de l'image" class="image">
-    </div>
-</body>
-</html>
+---
 
-<br>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight: bold; font-size: 24px;">
+            CUDA<br>Mandelbrot<br>acceleration
+        </div>
+        <img src="images/zoom.png" alt="Description de l'image" style="max-width: 400px;">
+    </div>
+
+---
 
 This project demonstrates various algorithms for computing the Mandelbrot set. The Mandelbrot set is a complex set of points that produces a fractal shape when plotted. It is defined by iterating the function:
 
