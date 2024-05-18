@@ -12,7 +12,7 @@ This project demonstrates various algorithms for computing the Mandelbrot set. T
 
 where \( c \in \mathbb{C} \) and \( z_0 = 0 \).
 
-As $n$ approaches infinity, the magnitude of \( z_n \) will either remain bounded or grow without bound. Points that remain bounded are considered part of the Mandelbrot set, while points that escape to infinity are not.
+As $n$ approaches infinity, the magnitude of \( z_n \) will either remain bounded or grow without bound. Starting points $c \in \mathbb{C}$ such that $(z_n)_n$ remain bounded are considered part of the Mandelbrot set, while points that escape to infinity are not.
 
 <div style="text-align: center;">
   <img src="images/MandelbrotSet.png" alt="Mandelbrot Set" width="500">
@@ -34,12 +34,14 @@ from cuda_mandelbrot_lib import MultithreadCPP, BaseCUDA, ManualUnroll, Polynomi
 
 This is a straightforward implementation of the Mandelbrot set computation in Python. It iterates over each point in the grid and computes the number of iterations required for the point to escape.
 
-All our implementations are subclasses of a common case class `_BaseAlgorithm`, and offer a similar interface, like the following:
+All our implementations are subclasses of a common base class `_BaseAlgorithm`, and offer a similar interface, like the following:
 
 ```python
 naive = NaiveSequential(escape_radius=escape_radius)
 output = naive.compute_grid(xmin, ymin, xmax, ymax, width, height, n_iterations)
 ```
+
+The output is a matrix of escape radii for each point in the grid.
 
 ### 2. Parallel Numpy (Python)
 
@@ -70,7 +72,7 @@ cpp = MultithreadCPP(escape_radius=escape_radius)
 
 ### 5. CUDA Implementation
 
-The CUDA implementation leverages NVIDIA's CUDA platform to perform parallel computation on the GPU. CUDA allows for massive parallelism by using thousands of lightweight threads. This implementation uses:
+The CUDA implementation leverages NVIDIA's CUDA platform to perform parallel computation on the GPU. CUDA allows for massive parallelism by using thousands of lightweight threads, each thread computing one pixel. This implementation uses:
 
 - Number of threads per block: 16x16 (256 threads).
 - Number of blocks: Determined by the grid size divided by the number of threads per block.
@@ -115,7 +117,7 @@ if i >= 3:  # evaluates to True
     break
 ```
 
-If `do_something`is fast enough, all the checks and extrai `i` variable can take a noticeable toll on performance. Now, consider the "unrolled" version:
+If `do_something`is fast enough, all the checks and `i` incrementations can take a noticeable toll on performance. Now, consider the "unrolled" version:
 
 ```python
 def unrolled():
@@ -177,7 +179,7 @@ Combining two iterations into one, we get:
 Let \( \begin{pmatrix} x_1 \\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \), then:
 
 \[ z*{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
-\[ z*{n+2} = \begin{pmatrix} x*1^2 - y_1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
+\[ z*{n+2} = \begin{pmatrix} x\*1^2 - y*1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
 \[ z*{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\ 2x_1y_1 + b \end{pmatrix} \]
 
 ---
@@ -224,12 +226,20 @@ Finally, we suspected that unrolling more than 2 operations can be beneficial in
 
 Below is a graph of the average execution time of each algorithm per grid size, in log-log scale.
 
-As we expect, all algorithms are asymptotically linear, but with different intersepts, and different behaviours for smaller grids.
+As we expect, all algorithms are asymptotically linear, but with different intercepts, and different behaviours for smaller grids.
 
-Noticeably, all custom CPU implementations beat the Numpy and Numba implementations by orders of magnitude, but the different GPU implementations are hard to differentiate. We'll run a separate analysis for those below, in two different areas of the grid.
+Noticeably, all custom CPU implementations beat the Numpy and Numba implementations by orders of magnitude, but the different GPU implementations are hard to differentiate.
 
-**Wide grid**
+Roughly, for large grids, in terms of speed,
 
-On a wide grid (i.e. one with a wide range of escape radii), we don't expect the high unroll values to perform much better than the standard CUDA implementation.
+$\text{CUDA} = \text{Unroll CUDA} > \text{Numba Python} > \text{Multithread C++} > \text{NumPy} > \text{Naive Python}$
 
-**Narrow grid**
+We'll run a separate analysis for those below, in two different areas of the grid.
+
+**GPU algorithms - Wide grid**
+
+On a wide grid (i.e. one with a wide range of escape radii, from points which escape within 1 or 2 iterations to points which don't escape after `max_iter` at all), we don't expect the high unroll values to perform much better than the standard CUDA implementation.
+
+**GPU algorithms - Narrow grid**
+
+On a grid where every point escapes after hundreds of iterations, it might be worth to do the iterations by batch.
