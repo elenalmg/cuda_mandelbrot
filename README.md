@@ -1,19 +1,50 @@
 CUDA/pybind project structure adapted from https://github.com/pkestene/pybind11-cuda
 
-# Mandelbrot Set Computation
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>README</title>
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .title {
+            font-weight: bold;
+            font-size: 24px;
+        }
+        .image {
+            max-width: 300px;
+            max-height: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="title">CUDA<br>Mandelbrot<br>acceleration</div>
+        <img src="images/zoom.png" alt="Description de l'image" class="image">
+    </div>
+</body>
+</html>
+
+<br>
 
 This project demonstrates various algorithms for computing the Mandelbrot set. The Mandelbrot set is a complex set of points that produces a fractal shape when plotted. It is defined by iterating the function:
 
-$z_{n+1} = z_n^2 + c$
+```math
+z_{n+1} = z_n^2 + c
+```
 
 where $c \in \mathbb{C}$ and $z_0 = 0$.
 
 As $n$ approaches infinity, the magnitude of $z_n$ will either remain bounded or grow without bound. Starting points $c \in \mathbb{C}$ such that $(z_n)_n$ remain bounded are considered part of the Mandelbrot set, while points that escape to infinity are not.
 
-<div style="text-align: center;">
+<p align="center">
   <img src="images/MandelbrotSet.png" alt="Mandelbrot Set" width="500">
-  <p><em>Figure 1: Mandelbrot set in the complex plane, in black.</em></p>
-</div>
+  <p align="center"><em>Figure 1: Mandelbrot set in the complex plane, in black.</em></p>
+</p>
 
 Since each pixel has to be computed individually, this problem is _embarrassingly parallel_.
 
@@ -157,7 +188,9 @@ The algorithm above is the basis for the `ManualUnroll` algorithm, even though i
 
 A single iteration of the Mandelbrot function is:
 
-$z_{n+1} = z_n^2 + c$
+```math
+z_{n+1} = z_n^2 + c
+```
 
 Expanding this using vector notation, we get:
 
@@ -246,10 +279,10 @@ Finally, we suspected that unrolling more than 2 operations can be beneficial in
 
 Below is a graph of the average execution time of each algorithm per grid size, in log-log scale.
 
-<div style="text-align: center;">
+<p align="center">
   <img src="images/times.png" alt="Mandelbrot Set" width="500">
-  <p><em>Figure 2: Time v.s. grid size.</em></p>
-</div>
+  <p align="center"><em>Figure 2: Time v.s. grid size.</em></p>
+</p>
 
 As we expect, all algorithms are asymptotically linear, but with different intercepts, and different behaviours for smaller grids.
 
