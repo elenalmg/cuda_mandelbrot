@@ -1,4 +1,4 @@
-Adapted from the structure of https://github.com/pkestene/pybind11-cuda
+CUDA/pybind project structure adapted from https://github.com/pkestene/pybind11-cuda
 
 # Mandelbrot Set Computation
 
