@@ -223,20 +223,45 @@ Finally, we suspected that unrolling more than 2 operations can be beneficial in
 
 Below is a graph of the average execution time of each algorithm per grid size, in log-log scale.
 
+<div style="text-align: center;">
+  <img src="images/times.png" alt="Mandelbrot Set" width="500">
+  <p><em>Figure 2: Time v.s. grid size.</em></p>
+</div>
+
 As we expect, all algorithms are asymptotically linear, but with different intercepts, and different behaviours for smaller grids.
 
-Noticeably, all custom CPU implementations beat the Numpy and Numba implementations by orders of magnitude, but the different GPU implementations are hard to differentiate.
+Noticeably, all custom CUDA implementations beat the Numpy and Numba implementations by orders of magnitude, but are hard to tell apart.
 
 Roughly, for large grids, in terms of speed,
 
-$\text{CUDA} = \text{Unroll CUDA} > \text{Numba Python} > \text{Multithread C++} > \text{NumPy} > \text{Naive Python}$
+$\text{CUDA implementations} > \text{Numba Python} > \text{Multithread C++} > \text{NumPy} > \text{Naive Python}$
 
-We'll run a separate analysis for those below, in two different areas of the grid.
+A linear regression yields:
 
-**GPU algorithms - Wide grid**
+| Model             | Cells per µs |
+| ----------------- | ------------ |
+| NaiveSequential   | 0.01         |
+| NumpyGrid         | 0.05         |
+| MultithreadCPP    | 10.3         |
+| NumbaCuda         | 132          |
+| PolynomialUnroll  | 2580         |
+| PragmaUnroll (2)  | 3340         |
+| BaseCUDA          | 3520         |
+| PragmaUnroll (5)  | 3770         |
+| PragmaUnroll (10) | 3770         |
+| PragmaUnroll (3)  | 3890         |
+| ManualUnroll      | 4230         |
 
-On a wide grid (i.e. one with a wide range of escape radii, from points which escape within 1 or 2 iterations to points which don't escape after `max_iter` at all), we don't expect the high unroll values to perform much better than the standard CUDA implementation.
+We'll run a separate analysis for the CUDA implementations below as a tie-breaker:
 
-**GPU algorithms - Narrow grid**
+| Column            | Time (ms) for (10k, 10k) grid |
+| ----------------- | ----------------------------- |
+| PolynomialUnroll  | ${237.7} \pm {2.4} $          |
+| BaseCUDA          | ${183.3} \pm {2.3} $          |
+| PragmaUnroll (2)  | ${182.2} \pm {2.3} $          |
+| PragmaUnroll (5)  | ${182.4} \pm {2.1} $          |
+| PragmaUnroll (3)  | ${182.4} \pm {2.3} $          |
+| PragmaUnroll (10) | ${182.0} \pm {2.0} $          |
+| ManualUnroll      | ${176.0} \pm {2.5} $          |
 
-On a grid where every point escapes after hundreds of iterations, it might be worth to do the iterations by batch.
+In the end, **`ManualUnroll` is statistically significantly faster than the CUDA benchmark `BaseCUDA`** (Z-statistic = 2.95, p-value = 0.0016), and all `PragmaUnroll` algorithms slightly beat the benchmark, but not significantly. The `PolynomialUnroll` is the worse of all CUDA implementations, which is not surprising given the fact that a lot of intermediary terms have to be computed and stored.
