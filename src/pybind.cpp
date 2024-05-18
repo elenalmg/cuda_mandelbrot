@@ -91,7 +91,7 @@ public:
         auto buf = result.request();
         int* ptr = static_cast<int*>(buf.ptr);
 
-        compute_grid_cuda_math_unroll, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, ptr);
+        compute_grid_cuda_math_unroll(x_min, y_min, x_max, y_max, width, height, max_iter, escape_radius_squared, ptr);
 
         result.resize({height, width});
         return result;
