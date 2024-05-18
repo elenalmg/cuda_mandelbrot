@@ -1,7 +1,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/numpy.h>
-#include "mandelbrot.cpp"
+#include "multithread.cpp"
 
 
 namespace py = pybind11;
