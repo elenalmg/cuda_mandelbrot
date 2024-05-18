@@ -161,23 +161,43 @@ $z_{n+1} = z_n^2 + c$
 
 Expanding this using vector notation, we get:
 
-$z_{n+1} = \begin{pmatrix} x \\\ y \end{pmatrix}^2 + \begin{pmatrix} a \\\ b \end{pmatrix}$
+```math
+z_{n+1} = \begin{pmatrix} x \\\ y \end{pmatrix}^2 + \begin{pmatrix} a \\\ b \end{pmatrix}
+```
 
 Using multiplication rules for complex numbers,
 
-$z_{n+1} = \begin{pmatrix} x^2 - y^2 \\\ 2xy \end{pmatrix} + \begin{pmatrix} a \\\ b \end{pmatrix}$
-$z_{n+1} = \begin{pmatrix} x^2 - y^2 + a \\\ 2xy + b \end{pmatrix}$
+```math
+z_{n+1} = \begin{pmatrix} x^2 - y^2 \\\ 2xy \end{pmatrix} + \begin{pmatrix} a \\\ b \end{pmatrix}
+```
+
+```math
+z_{n+1} = \begin{pmatrix} x^2 - y^2 + a \\\ 2xy + b \end{pmatrix}
+```
 
 Combining two iterations into one, we get:
 
 $z_{n+2} = (z_{n+1})^2 + c = ((z_n^2 + c)^2 + c)$
 
-Let $\begin{pmatrix} x_1 \\\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\\ 2xy + b \end{pmatrix}$, then:
+Let
 
-$z_{n+2} = \begin{pmatrix} x_1 \\\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\\ b \end{pmatrix}$
+```math
+\begin{pmatrix} x_1 \\\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\\ 2xy + b \end{pmatrix}
+```
 
-$z_{n+2} = \begin{pmatrix} x_1^2 - y_1^2 \\\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\\ b \end{pmatrix}$
-$z_{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\\ 2x_1y_1 + b \end{pmatrix}$
+then:
+
+```math
+z_{n+2} = \begin{pmatrix} x_1 \\\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\\ b \end{pmatrix}
+```
+
+```math
+z_{n+2} = \begin{pmatrix} x_1^2 - y_1^2 \\\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\\ b \end{pmatrix}
+```
+
+```math
+z_{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\\ 2x_1y_1 + b \end{pmatrix}
+```
 
 ---
 
@@ -197,7 +217,10 @@ $= 2x^2 \cdot 2xy + 2x^2 \cdot b - 2y^2 \cdot 2xy - 2y^2 \cdot b + 2a \cdot 2xy 
 $= 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b$
 
 Therefore:
-$z_{n+2} = \begin{pmatrix} x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a \\\ 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b \end{pmatrix}$
+
+```math
+z_{n+2} = \begin{pmatrix} x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a \\\ 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b \end{pmatrix}
+```
 
 When computing this polynomial, we can re-use a lot of the factors.
 
