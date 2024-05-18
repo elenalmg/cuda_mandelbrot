@@ -11,7 +11,7 @@ class NaiveSequential(_ComplexBaseAlgorithm):
             z = z * z + c
             if (z.real * z.real + z.imag * z.imag) >= self.escape_radius**2:
                 return i
-        return max_iter
+        return -1
 
     def compute_grid(self, c1: complex, c2: complex, width: int, height: int, max_iter: int) -> np.ndarray:
         result = np.zeros((height, width))
