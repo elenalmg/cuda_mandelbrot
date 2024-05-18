@@ -4,7 +4,7 @@ Adapted from the structure of https://github.com/pkestene/pybind11-cuda
 
 This project demonstrates various algorithms for computing the Mandelbrot set. The Mandelbrot set is a complex set of points that produces a fractal shape when plotted. It is defined by iterating the function:
 
-\[ z\_{n+1} = z_n^2 + c \]
+$z_{n+1} = z_n^2 + c$
 
 where \( c \in \mathbb{C} \) and \( z_0 = 0 \).
 
@@ -157,27 +157,27 @@ The algorithm above is the basis for the `ManualUnroll` algorithm, even though i
 
 A single iteration of the Mandelbrot function is:
 
-\[ z\_{n+1} = z_n^2 + c \]
+$z_{n+1} = z_n^2 + c$
 
 Expanding this using vector notation, we get:
 
-\[ z\_{n+1} = \begin{pmatrix} x \\ y \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
+$z_{n+1} = \begin{pmatrix} x \\ y \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix}$
 
 Using multiplication rules for complex numbers,
 
-\[ z*{n+1} = \begin{pmatrix} x^2 - y^2 \\ 2xy \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
-\[ z*{n+1} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \]
+$z_{n+1} = \begin{pmatrix} x^2 - y^2 \\ 2xy \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix}$
+$z_{n+1} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix}$
 
 Combining two iterations into one, we get:
 
-\[ z*{n+2} = (z*{n+1})^2 + c = ((z_n^2 + c)^2 + c) \]
+$z_{n+2} = (z_{n+1})^2 + c = ((z_n^2 + c)^2 + c)$
 
 Let \( \begin{pmatrix} x_1 \\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \), then:
 
-\[ z\_{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
+$z_{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix}$
 
-\[ z*{n+2} = \begin{pmatrix} x_1^2 - y_1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
-\[ z*{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\ 2x_1y_1 + b \end{pmatrix} \]
+$z_{n+2} = \begin{pmatrix} x_1^2 - y_1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix}$
+$z_{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\ 2x_1y_1 + b \end{pmatrix}$
 
 ---
 
@@ -186,18 +186,18 @@ Another idea is to expand this formula down to the most granular polynomial.
 Expanding the terms, we get:
 
 For the real part:
-\[ \text{Real part} = (x^2 - y^2 + a)^2 - (2xy + b)^2 + a \]
-\[ = (x^2 - y^2 + a)(x^2 - y^2 + a) - (2xy + b)(2xy + b) + a \]
-\[ = x^4 - 2x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4x^2y^2 - 4xyb - b^2 + a \]
-\[ = x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a \]
+$\text{Real part} = (x^2 - y^2 + a)^2 - (2xy + b)^2 + a$
+$= (x^2 - y^2 + a)(x^2 - y^2 + a) - (2xy + b)(2xy + b) + a$
+$= x^4 - 2x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4x^2y^2 - 4xyb - b^2 + a$
+$= x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a$
 
 For the imaginary part:
-\[ \text{Imaginary part} = 2(x^2 - y^2 + a)(2xy + b) + b \]
-\[ = 2x^2 \cdot 2xy + 2x^2 \cdot b - 2y^2 \cdot 2xy - 2y^2 \cdot b + 2a \cdot 2xy + 2a \cdot b + b \]
-\[ = 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b \]
+$\text{Imaginary part} = 2(x^2 - y^2 + a)(2xy + b) + b$
+$= 2x^2 \cdot 2xy + 2x^2 \cdot b - 2y^2 \cdot 2xy - 2y^2 \cdot b + 2a \cdot 2xy + 2a \cdot b + b$
+$= 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b$
 
 Therefore:
-\[ z\_{n+2} = \begin{pmatrix} x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a \\ 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b \end{pmatrix} \]
+$z_{n+2} = \begin{pmatrix} x^4 - 6x^2y^2 + y^4 + 2ax^2 - 2ay^2 + a^2 - 4xyb - b^2 + a \\ 4x^3y + 2x^2b - 4xy^3 - 2y^2b + 4axy + 2ab + b \end{pmatrix}$
 
 When computing this polynomial, we can re-use a lot of the factors.
 
@@ -264,4 +264,6 @@ We'll run a separate analysis for the CUDA implementations below as a tie-breake
 | PragmaUnroll (10) | ${182.0} \pm {2.0} $          |
 | ManualUnroll      | ${176.0} \pm {2.5} $          |
 
-In the end, **`ManualUnroll` is statistically significantly faster than the CUDA benchmark `BaseCUDA`** (Z-statistic = 2.95, p-value = 0.0016), and all `PragmaUnroll` algorithms slightly beat the benchmark, but not significantly. The `PolynomialUnroll` is the worse of all CUDA implementations, which is not surprising given the fact that a lot of intermediary terms have to be computed and stored.
+In the end, our **`ManualUnroll` is statistically significantly faster than the CUDA benchmark `BaseCUDA`** (Z-statistic = 2.95, p-value = 0.0016), and than every other algorithm we tried.
+
+All `PragmaUnroll` algorithms slightly beat the benchmark, but not very significantly. The `PolynomialUnroll` is the worse of all CUDA implementations, which is not surprising given the fact that a lot of intermediary terms have to be computed and stored.
