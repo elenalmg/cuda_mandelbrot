@@ -14,10 +14,10 @@ extern "C" void compute_grid_cuda_smooth_fast(float x_min, float y_min, float x_
 
 extern "C" void compute_grid_cuda_faster(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
 
-extern "C" void compute_grid_cuda_2(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
-extern "C" void compute_grid_cuda_3(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
-extern "C" void compute_grid_cuda_5(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
-extern "C" void compute_grid_cuda_10(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter, float escape_radius_squared, int* results);
+extern "C" void compute_grid_cuda_2(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results);
+extern "C" void compute_grid_cuda_3(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results);
+extern "C" void compute_grid_cuda_5(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results);
+extern "C" void compute_grid_cuda_10(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results);
 
 
 class MandelbrotCUDA {
