@@ -52,9 +52,9 @@ private:
 
 
 
-class Manualunroll {
+class ManualUnroll {
 public:
-    Manualunroll(float escape_radius) : escape_radius_squared(escape_radius * escape_radius) {}
+    ManualUnroll(float escape_radius) : escape_radius_squared(escape_radius * escape_radius) {}
 
     pybind11::array_t<int> compute_grid(float x_min, float y_min, float x_max, float y_max, int width, int height, int max_iter) const {
         auto result = pybind11::array_t<int>(width * height);
