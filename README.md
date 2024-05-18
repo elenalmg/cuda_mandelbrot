@@ -6,6 +6,8 @@ CUDA/pybind project structure adapted from https://github.com/pkestene/pybind11-
   <img src="images/title.png" alt="Mandelbrot Set" width="100%">
 </p>
 
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1ybh2hz8cjdoXbSwk-Y-m8qLj9_FEKRCM?usp=sharing)
+
 ---
 
 This project demonstrates various algorithms for computing the Mandelbrot set. The Mandelbrot set is a complex set of points that produces a fractal shape when plotted. It is defined by iterating the function:
@@ -300,3 +302,5 @@ We'll run a separate analysis for the CUDA implementations below as a tie-breake
 In the end, our **`ManualUnroll` is statistically significantly faster than the CUDA benchmark `BaseCUDA`** (Z-statistic = 2.95, p-value = 0.0016), and than every other algorithm we tried.
 
 All `PragmaUnroll` algorithms slightly beat the benchmark, but not very significantly. The `PolynomialUnroll` is the worse of all CUDA implementations, which is not surprising given the fact that a lot of intermediary terms have to be computed and stored.
+
+All of this code can be executed from the Google Colab notebook linked at the top of this README. We chose to use Colab to prevent incompatible hardware issues, and to access free GPUs.
