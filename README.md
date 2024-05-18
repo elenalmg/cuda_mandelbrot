@@ -2,12 +2,9 @@ CUDA/pybind project structure adapted from https://github.com/pkestene/pybind11-
 
 ---
 
-<div align="center" style="display: flex; justify-content: space-between;">
-    <p align="left" style="font-weight: bold; font-size: 24px;">
-        CUDA<br>Mandelbrot<br>acceleration
-    </p>
-    <img align="right" src="images/zoom.png" style="max-width: 400px;">
-</div>
+<p align="center">
+  <img src="images/title.png" alt="Mandelbrot Set" width="100%">
+</p>
 
 ---
 
