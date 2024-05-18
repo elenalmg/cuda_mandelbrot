@@ -1,7 +1,3 @@
-# CUDA Mandelbrot
-
-Starting point for GPU accelerated python libraries
-
 Adapted from the structure of https://github.com/pkestene/pybind11-cuda
 
 # Mandelbrot Set Computation
@@ -16,7 +12,7 @@ As $n$ approaches infinity, the magnitude of \( z_n \) will either remain bounde
 
 <div style="text-align: center;">
   <img src="images/MandelbrotSet.png" alt="Mandelbrot Set" width="500">
-  <p><em>Figure 1: Mandelbrot set in the complex plane</em></p>
+  <p><em>Figure 1: Mandelbrot set in the complex plane, in black.</em></p>
 </div>
 
 Since each pixel has to be computed individually, this problem is _embarassingly parallel_.
@@ -78,7 +74,7 @@ The CUDA implementation leverages NVIDIA's CUDA platform to perform parallel com
 - Number of blocks: Determined by the grid size divided by the number of threads per block.
 
 ```python
-cuda = MandelbrotCUDA(escape_radius=escape_radius)
+cuda = BaseCUDA(escape_radius=escape_radius)
 ```
 
 ---
@@ -178,8 +174,9 @@ Combining two iterations into one, we get:
 
 Let \( \begin{pmatrix} x_1 \\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \), then:
 
-\[ z*{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
-\[ z*{n+2} = \begin{pmatrix} x\*1^2 - y*1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
+\[ z\_{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix} \]
+
+\[ z*{n+2} = \begin{pmatrix} x_1^2 - y_1^2 \\ 2x_1y_1 \end{pmatrix} + \begin{pmatrix} a \\ b \end{pmatrix} \]
 \[ z*{n+2} = \begin{pmatrix} x_1^2 - y_1^2 + a \\ 2x_1y_1 + b \end{pmatrix} \]
 
 ---
