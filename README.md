@@ -6,9 +6,9 @@ This project demonstrates various algorithms for computing the Mandelbrot set. T
 
 $z_{n+1} = z_n^2 + c$
 
-where \( c \in \mathbb{C} \) and \( z_0 = 0 \).
+where $c \in \mathbb{C}$ and $z_0 = 0$.
 
-As $n$ approaches infinity, the magnitude of \( z_n \) will either remain bounded or grow without bound. Starting points $c \in \mathbb{C}$ such that $(z_n)_n$ remain bounded are considered part of the Mandelbrot set, while points that escape to infinity are not.
+As $n$ approaches infinity, the magnitude of $z_n$ will either remain bounded or grow without bound. Starting points $c \in \mathbb{C}$ such that $(z_n)_n$ remain bounded are considered part of the Mandelbrot set, while points that escape to infinity are not.
 
 <div style="text-align: center;">
   <img src="images/MandelbrotSet.png" alt="Mandelbrot Set" width="500">
@@ -172,7 +172,7 @@ Combining two iterations into one, we get:
 
 $z_{n+2} = (z_{n+1})^2 + c = ((z_n^2 + c)^2 + c)$
 
-Let \( \begin{pmatrix} x_1 \\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix} \), then:
+Let $\begin{pmatrix} x_1 \\ y_1 \end{pmatrix} = \begin{pmatrix} x^2 - y^2 + a \\ 2xy + b \end{pmatrix}$, then:
 
 $z_{n+2} = \begin{pmatrix} x_1 \\ y_1 \end{pmatrix}^2 + \begin{pmatrix} a \\ b \end{pmatrix}$
 
