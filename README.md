@@ -15,7 +15,7 @@ As $n$ approaches infinity, the magnitude of $z_n$ will either remain bounded or
   <p><em>Figure 1: Mandelbrot set in the complex plane, in black.</em></p>
 </div>
 
-Since each pixel has to be computed individually, this problem is _embarassingly parallel_.
+Since each pixel has to be computed individually, this problem is _embarrassingly parallel_.
 
 ## Algorithms
 
