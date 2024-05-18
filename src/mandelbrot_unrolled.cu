@@ -29,7 +29,7 @@ __device__ int mandelbrot_unroll_2(float x, float y, float escape_radius_squared
         }
     }
 
-    return max_iter;
+    return override_max_iter;
 }
 
 __global__ void mandelbrot_kernel_2(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results) {
@@ -88,7 +88,7 @@ __device__ int mandelbrot_unroll_3(float x, float y, float escape_radius_squared
         }
     }
 
-    return max_iter;
+    return override_max_iter;
 }
 
 __global__ void mandelbrot_kernel_3(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results) {
@@ -147,7 +147,7 @@ __device__ int mandelbrot_unroll_5(float x, float y, float escape_radius_squared
         }
     }
 
-    return max_iter;
+    return override_max_iter;
 }
 
 __global__ void mandelbrot_kernel_5(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results) {
@@ -206,7 +206,7 @@ __device__ int mandelbrot_unroll_10(float x, float y, float escape_radius_square
         }
     }
 
-    return max_iter;
+    return override_max_iter;
 }
 
 __global__ void mandelbrot_kernel_10(float x_min, float y_min, float x_max, float y_max, int width, int height, float escape_radius_squared, int* results) {
