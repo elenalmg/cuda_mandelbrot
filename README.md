@@ -257,7 +257,7 @@ Finally, we suspected that unrolling more than 2 operations can be beneficial in
 Below is a graph of the average execution time of each algorithm per grid size, in log-log scale.
 
 <p align="center">
-  <img src="images/times.png" alt="Mandelbrot Set" width="500">
+  <img src="images/times.png" alt="Mandelbrot Set" width="700">
   <p align="center"><em>Figure 2: Time v.s. grid size.</em></p>
 </p>
 
