@@ -43,7 +43,7 @@ __device__ float mandelbrot_smooth_color(float x, float y, int max_iter, float e
         float nu = logf(log_zn / logf(2.0f)) / logf(2.0f);
         return iter + 1 - nu;
     } else {
-        return max_iter;
+        return -1;
     }
 }
 
