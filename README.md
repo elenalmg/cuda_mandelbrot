@@ -18,7 +18,7 @@ z_{n+1} = z_n^2 + c
 
 where $c \in \mathbb{C}$ and $z_0 = 0$.
 
-As $n$ approaches infinity, the magnitude of $z_n$ will either remain bounded or grow without bound. Starting points $c \in \mathbb{C}$ such that $(z_n)_n$ remain bounded are considered part of the Mandelbrot set, while points that escape to infinity are not.
+As $n$ approaches infinity, the magnitude of $z_n$ will either remain bounded or grow without bound. Starting points $c \in \mathbb{C}$ such that $(z_n)_n$ remain bounded are considered part of the Mandelbrot set, while points that escape to infinity (i.e. exceed a certain threshold, the _excape radius_) are not.
 
 <p align="center">
   <img src="images/MandelbrotSet.png" alt="Mandelbrot Set" width="500">
@@ -49,7 +49,7 @@ naive = NaiveSequential(escape_radius=escape_radius)
 output = naive.compute_grid(xmin, ymin, xmax, ymax, width, height, n_iterations)
 ```
 
-The output is a matrix of escape radii for each point in the grid.
+The output is a matrix of the number of iterations before the norm of $z_n$ reaches the 'escape radius', for each point in the grid.
 
 ### 2. Parallel Numpy (Python)
 
